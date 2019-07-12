@@ -1,0 +1,6 @@
+# Editor specific files
+.idea/
+.vscode/
+
+# Config
+**/*config.toml
