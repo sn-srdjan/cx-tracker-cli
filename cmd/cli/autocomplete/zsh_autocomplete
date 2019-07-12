@@ -1,0 +1,20 @@
+#compdef cx-tracker-cli
+
+_arguments \
+  '1: :->level1' \
+  '2: :_files'
+case $state in
+  level1)
+    case $words[1] in
+      cx-tracker-cli)
+        _arguments '1: :(persistConfig version)'
+      ;;
+      *)
+        _arguments '*: :_files'
+      ;;
+    esac
+  ;;
+  *)
+    _arguments '*: :_files'
+  ;;
+esac
