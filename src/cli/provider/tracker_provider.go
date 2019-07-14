@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -15,7 +16,7 @@ type TrackerProvider struct {
 }
 
 // DefaultCxTrackerURL - default cx tracker url
-const DefaultCxTrackerURL = "https://tracker.skycoin.net"
+const DefaultCxTrackerURL = "https://tracker.skycoin.net/api/v1/config"
 
 // SaveToTrackerService - persist config on tracker service
 func (t *TrackerProvider) SaveToTrackerService(configFilePath string) error {
@@ -29,8 +30,10 @@ func (t *TrackerProvider) SaveToTrackerService(configFilePath string) error {
 		return fmt.Errorf("error while reading config %s", configFilePath)
 	}
 
-	if err := t.apiClient.Post(t.ServiceURL, bs, nil); err != nil {
-		return fmt.Errorf("error while persisting config %s on service %s", configFilePath, t.ServiceURL)
+	r := bytes.NewReader(bs)
+
+	if err := t.apiClient.Put(t.ServiceURL, r, nil); err != nil {
+		return fmt.Errorf("error while persisting config %s on service %s due to error: %s", configFilePath, t.ServiceURL, err)
 	}
 
 	return nil
