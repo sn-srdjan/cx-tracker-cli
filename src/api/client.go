@@ -111,17 +111,17 @@ func (c *Client) Get(endpoint string, obj interface{}) error {
 	return d.Decode(obj)
 }
 
-// Post makes a POST request with provided body to an endpoint and unmarshals the response to obj.
+// Put makes a PUT request with provided body to an endpoint and unmarshals the response to obj.
 // If the response is not 200 OK, returns an error
-func (c *Client) Post(endpoint string, body, obj interface{}) error {
-	resp, err := c.post(endpoint, body)
+func (c *Client) Put(endpoint string, body, obj interface{}) error {
+	resp, err := c.put(endpoint, body)
 	if err != nil {
 		return err
 	}
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusCreated {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return err
@@ -144,16 +144,13 @@ func (c *Client) get(endpoint string) (*http.Response, error) {
 	return c.makeRequestWithoutBody(endpoint, http.MethodGet)
 }
 
-// post makes a POST request to an endpoint with provided body. Caller must close response body.
-func (c *Client) post(endpoint string, body interface{}) (*http.Response, error) {
-	return c.makeRequestWithBody(body, endpoint, http.MethodPost)
+// post makes a PUT request to an endpoint with provided body. Caller must close response body.
+func (c *Client) put(endpoint string, body interface{}) (*http.Response, error) {
+	return c.makeRequestWithBody(body, endpoint, http.MethodPut)
 }
 
 // makeRequestWithoutBody makes a `method` request to an endpoint. Caller must close response body.
 func (c *Client) makeRequestWithoutBody(endpoint, method string) (*http.Response, error) {
-	endpoint = strings.TrimLeft(endpoint, "/")
-	endpoint = c.Addr + endpoint
-
 	req, err := http.NewRequest(method, endpoint, nil)
 	if err != nil {
 		return nil, err
@@ -164,9 +161,6 @@ func (c *Client) makeRequestWithoutBody(endpoint, method string) (*http.Response
 
 // makeRequestWithBody makes a `method` request to an endpoint. Caller must close response body.
 func (c *Client) makeRequestWithBody(body interface{}, endpoint, method string) (*http.Response, error) {
-	endpoint = strings.TrimLeft(endpoint, "/")
-	endpoint = c.Addr + endpoint
-
 	req, err := http.NewRequest(method, endpoint, body.(io.Reader))
 	if err != nil {
 		return nil, err
