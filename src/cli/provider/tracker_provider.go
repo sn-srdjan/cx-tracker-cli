@@ -16,7 +16,7 @@ type TrackerProvider struct {
 }
 
 // DefaultCxTrackerURL - default cx tracker url
-const DefaultCxTrackerURL = "https://tracker.skycoin.net/api/v1/config"
+const DefaultCxTrackerURL = "https://cx-tracker.skycoin.net/api/v1/config"
 
 // SaveToTrackerService - persist config on tracker service
 func (t *TrackerProvider) SaveToTrackerService(configFilePath string) error {
