@@ -4,3 +4,6 @@
 
 # Config
 **/*config.toml
+
+# Config test file
+configSaveTest.json

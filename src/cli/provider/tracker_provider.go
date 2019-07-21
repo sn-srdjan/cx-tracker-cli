@@ -2,6 +2,7 @@ package provider
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -13,6 +14,10 @@ import (
 type TrackerProvider struct {
 	ServiceURL string
 	apiClient  *api.Client
+}
+
+type cxApplicationConfig struct {
+	GenesisHash string `json:"genesisHash"`
 }
 
 // DefaultCxTrackerURL - default cx tracker url
@@ -34,6 +39,32 @@ func (t *TrackerProvider) SaveToTrackerService(configFilePath string) error {
 
 	if err := t.apiClient.Put(t.ServiceURL, r, nil); err != nil {
 		return fmt.Errorf("error while persisting config %s on service %s due to error: %s", configFilePath, t.ServiceURL, err)
+	}
+
+	return nil
+}
+
+func (t *TrackerProvider) GetConfigFromTrackerService(genesisHash, configFilePath string) error {
+	t.init()
+	t.ServiceURL = t.ServiceURL + "/" + genesisHash + "/file"
+	configResp := cxApplicationConfig{}
+	err := t.apiClient.Get(t.ServiceURL, &configResp)
+	if err != nil {
+		return fmt.Errorf("error while retreiving config with genesis hash: %s on service %s due to error: %s", genesisHash, t.ServiceURL, err)
+	}
+
+	data, err := json.MarshalIndent(configResp, "", " ")
+	if err != nil {
+		return fmt.Errorf("error while marshal config with genesis hash: %s due to error: %s", genesisHash, err)
+	}
+
+	f, err := os.Create(configFilePath)
+	if err != nil {
+		return fmt.Errorf("error while creating file for config with genesis hash: %s due to error: %s", genesisHash, err)
+	}
+
+	if _, err := f.Write(data); err != nil {
+		return fmt.Errorf("error while saving config to file with genesis hash: %s due to error: %s", genesisHash, err)
 	}
 
 	return nil
