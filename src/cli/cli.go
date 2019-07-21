@@ -16,7 +16,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/sn-srdjan/cx-tracker-cli/src/cli/provider"
+	"github.com/sn-srdjan/cx-tracker-cli/src/cli/cxtracker"
 	// "github.com/skycoin/skycoin/src/util/file"
 )
 
@@ -27,7 +27,7 @@ var (
 
 var (
 	envVarsHelp = fmt.Sprintf(`ENVIRONMENT VARIABLES:
-    CX_TRACKER_ADDR: Address of CX Tracker service. Must be in scheme://host format. Default "%s"`, provider.DefaultCxTrackerURL)
+    CX_TRACKER_ADDR: Address of CX Tracker service. Must be in scheme://host format. Default "%s"`, cxtracker.DefaultCxTrackerURL)
 
 	helpTemplate = fmt.Sprintf(`USAGE:{{if .Runnable}}
   {{.UseLine}}{{end}}{{if .HasAvailableSubCommands}}
@@ -74,7 +74,7 @@ type Config struct {
 func LoadConfig() (Config, error) {
 	trackerURL := os.Getenv("CX_TRACKER_URL")
 	if trackerURL == "" {
-		trackerURL = provider.DefaultCxTrackerURL
+		trackerURL = cxtracker.DefaultCxTrackerURL
 	}
 
 	if _, err := url.Parse(trackerURL); err != nil {

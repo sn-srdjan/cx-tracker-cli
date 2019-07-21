@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/sn-srdjan/cx-tracker-cli/src/cli/provider"
 )
 
 func persistConfigCmd() *cobra.Command {
@@ -12,9 +11,9 @@ func persistConfigCmd() *cobra.Command {
 		Short: "Save config to CX Tracker service",
 		Use:   "save [flags] [path_to_config_file]",
 		Long: fmt.Sprintf(`Save config file on remote CX Tracker service, the default
-    service URL is %s.`, provider.DefaultCxTrackerURL),
-		SilenceUsage:          true,
-		Args:                  cobra.MinimumNArgs(1),
+    service URL is %s.`, cxtracker.DefaultCxTrackerURL),
+		SilenceUsage: true,
+		Args:         cobra.MinimumNArgs(1),
 		DisableFlagsInUseLine: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			configFilePath := args[0]
@@ -24,10 +23,10 @@ func persistConfigCmd() *cobra.Command {
 
 			serviceURL, err := c.Flags().GetString("url")
 			if err != nil {
-				serviceURL = provider.DefaultCxTrackerURL
+				serviceURL = cxtracker.DefaultCxTrackerURL
 			}
 
-			tracker := provider.TrackerProvider{
+			tracker := cxtracker.TrackerProvider{
 				ServiceURL: serviceURL,
 			}
 
